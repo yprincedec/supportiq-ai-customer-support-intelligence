@@ -142,3 +142,39 @@ No result, deployment, upload, or model performance will be described as complet
 - Bitext: [Hugging Face dataset](https://huggingface.co/datasets/bitext/Bitext-customer-support-llm-chatbot-training-dataset) and [original GitHub repository](https://github.com/bitext/customer-support-llm-chatbot-training-dataset).
 
 Consult the original dataset cards, publisher documentation, and licences for authoritative terms and attribution requirements.
+
+## 10. AI-Assisted Development & Human Oversight
+
+AI tools are used as development assistants throughout SupportIQ. The goal is to demonstrate responsible, practical use of AI in a modern data/AI workflow—not to present AI-generated work as independently verified work.
+
+### Where AI assistance may be used
+
+- **Project planning:** brainstorm architecture, break work into milestones, and compare implementation options.
+- **Learning and research support:** explain unfamiliar concepts, summarize technical documentation, and identify questions that need source verification.
+- **Coding assistance:** draft code scaffolds, suggest Pandas/Scikit-learn workflows, and help refactor repetitive code.
+- **Debugging:** interpret error messages, propose possible causes, and suggest fixes to test.
+- **Data analysis support:** suggest audit checks, visualizations, evaluation metrics, and potential data-quality issues.
+- **NLP / ML / RAG experimentation:** help compare approaches, design experiments, and review retrieval or evaluation strategies.
+- **Documentation:** prepare draft README sections, experiment notes, and technical explanations.
+
+### Human responsibility and verification
+
+The project owner remains responsible for decisions, code execution, data handling, interpretation, and final results. AI suggestions are treated as hypotheses, not facts. Code and claims must be checked against actual outputs, reliable documentation, dataset cards, licences, and reproducible tests.
+
+- Do not report AI-suggested code as tested until it has been run and its output inspected.
+- Do not accept generated citations, dataset facts, or licence claims without checking the original source.
+- Review generated code for correctness, security, privacy, leakage, and unnecessary complexity.
+- Do not submit confidential, personal, credential, or otherwise sensitive data to AI tools.
+- Record meaningful AI assistance in milestone notes when it materially affects implementation or analysis.
+- Clearly distinguish AI-assisted drafts from the final human-reviewed implementation and conclusions.
+
+### AI usage log
+
+For major milestones, record:
+1. Task and why AI assistance was useful.
+2. Type of assistance (planning, explanation, code draft, debugging, review, or documentation).
+3. What was accepted, changed, or rejected.
+4. How the result was independently verified.
+5. Any limitations or remaining risks.
+
+This makes AI usage transparent and demonstrates the ability to use AI tools productively while retaining technical judgment and accountability.

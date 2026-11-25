@@ -1,180 +1,127 @@
 # SupportIQ — AI-Powered Customer Support & Intelligence Platform
 
-SupportIQ is an end-to-end portfolio and research prototype exploring customer-support analytics, ticket intelligence, machine learning, NLP, retrieval-augmented generation (RAG), and support-assistance workflows.
+An experimental end-to-end customer support intelligence platform combining operational data analysis, machine learning, retrieval-augmented generation (RAG), and human-in-the-loop ticket management.
 
-> **Project status:** Phase 1 — Dataset Audit
-> **Workflow:** Google Colab for experimentation; GitHub for version control and documentation.
-> **Scope:** This is a prototype, not a production customer-support system.
+## Project status
 
-## 1. Problem Statement
+Notebook prototype implemented through model export and reload verification. Streamlit UI, standalone deployment and historical analytics dashboard remain pending.
 
-Customer-support teams handle large volumes of tickets and need ways to understand recurring issues, prioritize work, identify trends, and provide consistent assistance. SupportIQ will explore a modular workflow for ticket data auditing, operational analysis, suitable ML experiments, semantic retrieval, and response-assistance prototypes.
+## Business objectives
 
-Model capabilities and evaluation claims will be added only after experiments are completed and verified.
+- Categorize incoming tickets and suggest routing with uncertainty-aware review.
+- Retrieve relevant support examples and generate draft responses.
+- Prevent unsupported claims of completed customer account actions.
+- Preserve original predictions and human corrections for future evaluation.
+- Track ticket review and safety metrics.
 
-## 2. Dataset Sources & Intended Use
+## Data sources
 
-We use two datasets for different purposes. They are not interchangeable.
+| Dataset | Purpose | Records |
+|---|---|---:|
+| [Support Ticket Dataset](https://huggingface.co/datasets/s2pidape/support-ticket-dataset), humans_only | Operational analysis and category classification | 1,500,000 |
+| [Bitext Customer Support](https://huggingface.co/datasets/bitext/Bitext-customer-support-llm-chatbot-training-dataset) | Retrieval and response experiments | 26,872 |
 
-### A. Primary operational dataset — Support Ticket Dataset (humans_only)
+[Bitext publisher repository](https://github.com/bitext/customer-support-llm-chatbot-training-dataset). These are separate datasets; Bitext examples are not verified company policies or ground-truth responses for the operational tickets. Raw data and derived artifacts are withheld pending redistribution-license review.
 
-- **Publisher / dataset ID:** [s2pidape/support-ticket-dataset](https://huggingface.co/datasets/s2pidape/support-ticket-dataset)
-- **Configuration:** `humans_only`
-- **Role:** Primary source for ticket-level audit, exploratory analysis, operational metrics, and ML experiments supported by its actual fields.
-- **Loading:** Hugging Face `datasets` library in Google Colab.
-- **Due diligence:** Provenance, collection/generation method, schema, licence, and limitations must be checked against the dataset card and inspected records before making claims about realism or suitability.
-- **Redistribution:** Raw data will not be committed here unless the applicable licence and dataset terms explicitly permit it.
+## Architecture
 
-### B. NLP and response experiment dataset — Bitext Customer Support
-
-- **Publisher:** Bitext.
-- **Canonical dataset:** [Bitext Customer Support LLM Chatbot Training Dataset](https://huggingface.co/datasets/bitext/Bitext-customer-support-llm-chatbot-training-dataset)
-- **Original publisher repository:** [bitext/customer-support-llm-chatbot-training-dataset](https://github.com/bitext/customer-support-llm-chatbot-training-dataset)
-- **Role:** Separate experiments for intent classification, instruction/response analysis, NLP preprocessing, and response-assistance prototypes.
-- **Publisher-described size:** 26,872 question/answer pairs, 27 intents, and 10 categories.
-- **Licence shown on Hugging Face:** CDLA-Sharing-1.0. Review its terms before redistributing data or derivatives.
-
-### Dataset separation
-
-The primary ticket dataset is the operational-analysis source. Bitext is a separately published hybrid synthetic customer-service instruction/response dataset. Bitext responses are examples, not verified answers to tickets in the primary dataset. We will not use Bitext examples as ground-truth operational outcomes.
-
-## 3. Planned Technology Stack
-
-| Area | Tools |
-|---|---|
-| Programming and analysis | Python, Pandas, NumPy |
-| Classical machine learning | Scikit-learn |
-| NLP | Scikit-learn text tools, Sentence Transformers |
-| Semantic retrieval | FAISS |
-| GenAI / RAG | Open-source models and retrieval components, selected after feasibility checks |
-| API | FastAPI |
-| User interface | Streamlit |
-| Persistence | SQLite |
-| Experiment environment | Google Colab |
-| Version control | Git and GitHub |
-
-The stack is a project plan. A component will be marked implemented only after its code and results are committed and verified.
-
-## 4. Planned Architecture
-
-```text
-Support Ticket Dataset (humans_only) --> Audit --> Cleaning / EDA
-                                               |
-                                               +--> Supported ML experiments
-
-Bitext Customer Support --> NLP / intent / response experiments
-                                               |
-                           Sentence Transformers --> FAISS
-                                               |
-                                          RAG / assistant
-                                               |
-                                        FastAPI service
-                                               |
-                                       Streamlit interface
-                                               |
-                                          SQLite storage
+```mermaid
+flowchart TD
+    A[Customer query] --> B[Semantic classifier]
+    B --> C[Category suggestion or manual review]
+    A --> D[Sentence Transformer embeddings]
+    D --> E[FAISS retrieval]
+    E --> F[Gemini or guarded response template]
+    F --> G[Response safety audit]
+    C --> H[FastAPI and SQLite]
+    G --> H
+    H --> I[Human category and response review]
+    H --> J[Demo analytics]
 ```
 
-The two dataset streams remain distinct. Any future retrieval corpus, model training data, and evaluation set will be documented separately.
+## Implementation
 
-## 5. Development Roadmap
+### Data audit and feature engineering
+- 1.5 million records, 38 source columns, 11 categories and 100 issue types.
+- 277,373 distinct descriptions; 1,222,627 repeated rows by description.
+- Investigated unusually high ticket volumes on September 4–5, 2023; cause unverified.
+- Excluded post-intake outcomes and direct customer identifiers from classification features.
+- Grouped split by normalized description to prevent exact-text overlap. Near-duplicate leakage remains possible.
 
-- [ ] Phase 1 — Audit the primary support-ticket dataset.
-- [ ] Phase 1B — Audit the Bitext dataset and document its licence and schema.
-- [ ] Phase 2 — Data cleaning, exploratory analysis, and data-quality report.
-- [ ] Phase 3 — Baseline ML experiments and leakage-safe evaluation.
-- [ ] Phase 4 — NLP and intent-classification experiments with Bitext.
-- [ ] Phase 5 — Embeddings, FAISS indexing, and retrieval evaluation.
-- [ ] Phase 6 — RAG / response-assistance prototype with appropriate safeguards.
-- [ ] Phase 7 — FastAPI backend and SQLite persistence.
-- [ ] Phase 8 — Streamlit interface, tests, documentation, and final evaluation.
+### Machine learning
+Baseline: TF-IDF bigrams, metadata preprocessing and SGDClassifier with logistic loss. Primary model: all-MiniLM-L6-v2 embeddings (384 dimensions) and logistic regression trained on a balanced sample of 5,500 descriptions.
 
-Roadmap items remain unchecked until completed and verified.
+| Evaluation | Result |
+|---|---:|
+| Baseline grouped dataset test | 100% accuracy |
+| Baseline text-only temporal test | 100% accuracy |
+| Metadata-only ablation | 9.12% accuracy |
+| Baseline on 12 manually authored development queries | 7/12 (58.33%) |
+| Semantic model on same development queries | 12/12 |
+| Semantic model on 33 additional authored queries | 32/33 (96.97%) |
+| Semantic suggestions at experimental 0.70 threshold | 28/33 |
+| Correct suggestions within that subset | 28/28 |
 
-## 6. Data Quality, Leakage & Evaluation Principles
+Perfect dataset scores likely reflect templated language, not production reliability. Authored queries are AI-assisted, not independently sourced customer tickets. The threshold was selected using the validation sample and is not calibrated. All predictions remain subject to human review.
 
-- Inspect dataset provenance, schema, licence, and limitations before modelling.
-- Keep raw data separate from cleaned and derived data.
-- Split data before fitting learned preprocessing steps such as vectorizers and encoders.
-- Check exact and near-duplicate records before splitting; prevent duplicates from leaking across evaluation partitions.
-- Exclude identifiers from features unless a justified, leakage-safe use is demonstrated.
-- Inspect timestamps, labels, and text for target leakage or post-outcome information.
-- Fit preprocessing only on training data and apply it to validation/test data.
-- Keep a held-out test set untouched until final evaluation.
-- Report suitable metrics, including per-class results where class imbalance matters.
-- Do not present synthetic-data performance as proof of real-world customer-support performance.
+### Retrieval and generation
+- Sentence Transformers, normalized embeddings and FAISS IndexFlatIP over 26,872 examples.
+- Experimental retrieval threshold 0.50.
+- Gemini generation with fallback model and deterministic responses for sensitive operational requests.
+- Placeholder, unsupported-action, portal-assumption and personal-information-request checks.
+- Ten scripted safety examples passed the implemented audit; this does not establish comprehensive safety.
 
-## 7. Repository Structure
+### API and persistence
 
-```text
-supportiq-ai-customer-support-intelligence/
-├── data/
-│   └── README.md
-├── notebooks/
-│   ├── 01_dataset_audit.ipynb
-│   └── 02_bitext_nlp_audit.ipynb
-├── reports/
-│   └── dataset_audit/
-├── src/
-├── models/
-├── app/
-├── tests/
-├── requirements.txt
-├── .gitignore
-└── README.md
-```
+| Method | Route | Purpose |
+|---|---|---|
+| GET | / | Service metadata |
+| GET | /health | Basic health response |
+| POST | /classify | Semantic category suggestion |
+| POST | /support | Guarded draft generation |
+| POST | /tickets | Create pending ticket |
+| GET | /tickets | List and filter tickets |
+| GET | /tickets/{id} | Retrieve ticket |
+| POST | /tickets/{id}/review | Approve, edit or reject draft |
+| POST | /tickets/{id}/category-review | Confirm or correct category |
+| GET | /analytics | Demo ticket metrics |
 
-Large raw datasets, credentials, API keys, and private information must not be committed. The data/README.md file will document download instructions and expected local paths.
+SQLite preserves original prediction, confidence, alternative categories, reviewed category and response approval status. Duplicate category reviews and invalid categories are blocked. Category correction does not automatically retrain the model. No real refunds, cancellations, transfers or message delivery occur.
 
-## 8. Reproducibility & GitHub Workflow
+## Validation checkpoint
 
-Each milestone should include a saved and reproducible notebook or source-code change, verified outputs, a concise findings summary, updated documentation, and a descriptive Git commit.
+- Human response review: five scripted validation checks passed.
+- Approval/rejection: two decision checks passed.
+- Category correction: three checks passed (invalid category, valid correction, duplicate review).
+- Both exported classifiers reloaded successfully and reproduced tested predictions; semantic probabilities also matched.
+- API tests use FastAPI TestClient in Colab, not a deployed server.
 
-No result, deployment, upload, or model performance will be described as complete until verified.
+## Technology stack
 
-## 9. Current Progress
+Python, Pandas, NumPy, scikit-learn, Sentence Transformers, FAISS, Google Gemini SDK, FastAPI, Pydantic, SQLite, joblib, Google Colab and GitHub. Streamlit is planned.
 
-**Current milestone:** Repository initialized; primary dataset configuration has been loaded in the Colab session. Dataset metadata and audit findings are still pending verification.
+## Reproduction and security
 
-## Acknowledgements
+The notebook is the development source. Install dependencies in Colab, obtain datasets from their publishers, and configure GEMINI_API_KEY through Colab Secrets. Run the audit, training, retrieval, backend and evaluation stages in order. Embedding generation can take substantial CPU time. Exported models require compatible library versions and the semantic embedding model.
 
-- Support Ticket Dataset publisher: [s2pidape on Hugging Face](https://huggingface.co/datasets/s2pidape/support-ticket-dataset).
-- Bitext: [Hugging Face dataset](https://huggingface.co/datasets/bitext/Bitext-customer-support-llm-chatbot-training-dataset) and [original GitHub repository](https://github.com/bitext/customer-support-llm-chatbot-training-dataset).
+Do not publish API keys, raw customer records or unreviewed notebook outputs. Do not load untrusted joblib files. Authentication, reviewer identity, privacy controls, independent evaluation and production deployment are not implemented. Existing demo analytics mixes legacy and semantic predictions; historical analytics is separate and pending.
 
-Consult the original dataset cards, publisher documentation, and licences for authoritative terms and attribution requirements.
+## Roadmap
 
-## 10. AI-Assisted Development & Human Oversight
+- [x] Dataset audit and feature engineering
+- [x] Baseline and semantic classification
+- [x] RAG and guarded GenAI drafts
+- [x] FastAPI and SQLite prototype
+- [x] Human response and category review
+- [x] Model export and same-runtime reload tests
+- [ ] Sanitized notebook and reproducible standalone modules
+- [ ] Streamlit frontend and historical analytics dashboard
+- [ ] Independent evaluation and deployment hardening
 
-AI tools are used as development assistants throughout SupportIQ. The goal is to demonstrate responsible, practical use of AI in a modern data/AI workflow—not to present AI-generated work as independently verified work.
+## AI-assisted development
 
-### Where AI assistance may be used
+ChatGPT assisted with planning, code drafting, debugging, validation design and documentation. The project uses Gemini for experimental support draft generation. AI-assisted test results are explicitly distinguished from independent production evidence.
 
-- **Project planning:** brainstorm architecture, break work into milestones, and compare implementation options.
-- **Learning and research support:** explain unfamiliar concepts, summarize technical documentation, and identify questions that need source verification.
-- **Coding assistance:** draft code scaffolds, suggest Pandas/Scikit-learn workflows, and help refactor repetitive code.
-- **Debugging:** interpret error messages, propose possible causes, and suggest fixes to test.
-- **Data analysis support:** suggest audit checks, visualizations, evaluation metrics, and potential data-quality issues.
-- **NLP / ML / RAG experimentation:** help compare approaches, design experiments, and review retrieval or evaluation strategies.
-- **Documentation:** prepare draft README sections, experiment notes, and technical explanations.
+## Author
 
-### Human responsibility and verification
-
-The project owner remains responsible for decisions, code execution, data handling, interpretation, and final results. AI suggestions are treated as hypotheses, not facts. Code and claims must be checked against actual outputs, reliable documentation, dataset cards, licences, and reproducible tests.
-
-- Do not report AI-suggested code as tested until it has been run and its output inspected.
-- Do not accept generated citations, dataset facts, or licence claims without checking the original source.
-- Review generated code for correctness, security, privacy, leakage, and unnecessary complexity.
-- Do not submit confidential, personal, credential, or otherwise sensitive data to AI tools.
-- Record meaningful AI assistance in milestone notes when it materially affects implementation or analysis.
-- Clearly distinguish AI-assisted drafts from the final human-reviewed implementation and conclusions.
-
-### AI usage log
-
-For major milestones, record:
-1. Task and why AI assistance was useful.
-2. Type of assistance (planning, explanation, code draft, debugging, review, or documentation).
-3. What was accepted, changed, or rejected.
-4. How the result was independently verified.
-5. Any limitations or remaining risks.
-
-This makes AI usage transparent and demonstrates the ability to use AI tools productively while retaining technical judgment and accountability.
+**Prince Yadav**

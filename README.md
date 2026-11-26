@@ -4,7 +4,7 @@ An experimental end-to-end customer support intelligence platform combining oper
 
 ## Project status
 
-Notebook prototype implemented through model export and reload verification. Streamlit UI, standalone deployment and historical analytics dashboard remain pending.
+Notebook prototype and five-page Streamlit frontend implemented and tested in Colab. Standalone deployment and Power BI historical analytics remain pending. No permanent public demo is available.
 
 ## Business objectives
 
@@ -96,9 +96,29 @@ SQLite preserves original prediction, confidence, alternative categories, review
 - Both exported classifiers reloaded successfully and reproduced tested predictions; semantic probabilities also matched.
 - API tests use FastAPI TestClient in Colab, not a deployed server.
 
+## Application walkthrough
+
+| Page | Purpose |
+|---|---|
+| Overview Dashboard | Demo ticket KPIs, category distribution, approval and retrieval metrics |
+| Create Support Ticket | Submit a query, inspect category suggestions and guarded draft |
+| Ticket Management | Search, filter and inspect stored tickets |
+| Human Review Centre | Approve, edit or reject drafts and correct categories |
+| Model Performance | Compare classifiers and monitor human corrections |
+
+All five pages passed the post-styling Streamlit AppTest rendering check with zero reported errors or exceptions. Local HTTP requests to FastAPI returned 200 during this check. This is not exhaustive interaction or production testing.
+
+### Planned Power BI reporting
+
+Historical ticket analytics will be separate from the small application demo database. Planned pages: executive overview, support operations, customer intelligence, escalation analysis and AI model evaluation. SLA and satisfaction measures depend on verified source fields and definitions.
+
+### Running the prototype
+
+The current application depends on a running notebook backend at localhost port 8000. Streamlit runs on port 8501. A standalone installation guide will be added after independent backend export and testing. Do not expose the unauthenticated prototype publicly.
+
 ## Technology stack
 
-Python, Pandas, NumPy, scikit-learn, Sentence Transformers, FAISS, Google Gemini SDK, FastAPI, Pydantic, SQLite, joblib, Google Colab and GitHub. Streamlit is planned.
+Python, Pandas, NumPy, scikit-learn, Sentence Transformers, FAISS, Google Gemini SDK, FastAPI, Pydantic, SQLite, joblib, Google Colab and GitHub. Streamlit and Plotly provide the operational frontend; Power BI Desktop is planned for historical business intelligence.
 
 ## Reproduction and security
 
@@ -115,7 +135,8 @@ Do not publish API keys, raw customer records or unreviewed notebook outputs. Do
 - [x] Human response and category review
 - [x] Model export and same-runtime reload tests
 - [ ] Sanitized notebook and reproducible standalone modules
-- [ ] Streamlit frontend and historical analytics dashboard
+- [x] Streamlit frontend and five-page rendering regression test
+- [ ] Power BI historical analytics dashboard
 - [ ] Independent evaluation and deployment hardening
 
 ## AI-assisted development
@@ -124,4 +145,4 @@ ChatGPT assisted with planning, code drafting, debugging, validation design and 
 
 ## Author
 
-**Prince Yadav**
+**Prince Yadav** — [LinkedIn](https://linkedin.com/in/yprincedec)

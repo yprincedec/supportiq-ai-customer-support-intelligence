@@ -4,7 +4,13 @@ An experimental end-to-end customer support intelligence platform combining oper
 
 ## Project status
 
-Notebook prototype and five-page Streamlit frontend implemented and tested in Colab. Standalone deployment and Power BI historical analytics remain pending. No permanent public demo is available.
+| Component | Status |
+|---|---|
+| Standalone FastAPI backend and Streamlit frontend | Implemented and locally tested in Colab |
+| Private application bundle | Created; 65 files, 40.31 MB |
+| Public source release | Pending |
+| Power BI historical analytics | Planned |
+| Clean installation, Windows and public deployment | Not verified |
 
 ## Business objectives
 
@@ -67,7 +73,7 @@ Perfect dataset scores likely reflect templated language, not production reliabi
 ### Retrieval and generation
 - Sentence Transformers, normalized embeddings and FAISS IndexFlatIP over 26,872 examples.
 - Experimental retrieval threshold 0.50.
-- Gemini generation with fallback model and deterministic responses for sensitive operational requests.
+- Gemini generation with configured model and deterministic responses for sensitive operational requests.
 - Placeholder, unsupported-action, portal-assumption and personal-information-request checks.
 - Ten scripted safety examples passed the implemented audit; this does not establish comprehensive safety.
 
@@ -89,6 +95,20 @@ Perfect dataset scores likely reflect templated language, not production reliabi
 SQLite preserves original prediction, confidence, alternative categories, reviewed category and response approval status. Duplicate category reviews and invalid categories are blocked. Category correction does not automatically retrain the model. No real refunds, cancellations, transfers or message delivery occur.
 
 ## Validation checkpoint
+
+| Standalone validation | Passed |
+|---|---:|
+| Local backend server | 5/5 |
+| Live HTTP service | 8/8 |
+| Frontend pages | 5/5 |
+| End-to-end ticket creation | 11/11 |
+| Human review workflow | 11/11 |
+| Analytics checks | 14/14 |
+| Required files | 21/21 |
+| Credential pattern scan | 56/56 |
+| Installed dependency versions | 18/18 |
+
+The 36 end-to-end checks cover a controlled single-ticket workflow, not production performance.
 
 - Human response review: five scripted validation checks passed.
 - Approval/rejection: two decision checks passed.
@@ -114,11 +134,21 @@ Historical ticket analytics will be separate from the small application demo dat
 
 ### Running the prototype
 
-The current application depends on a running notebook backend at localhost port 8000. Streamlit runs on port 8501. A standalone installation guide will be added after independent backend export and testing. Do not expose the unauthenticated prototype publicly.
+The standalone modules were tested with independent local FastAPI and Streamlit processes in Colab. Default local ports are 8000 and 8501. Required artifacts remain private; cloning the public repository alone is insufficient. Fresh installation is unverified. Do not expose the unauthenticated prototype publicly.
 
 ## Technology stack
 
-Python, Pandas, NumPy, scikit-learn, Sentence Transformers, FAISS, Google Gemini SDK, FastAPI, Pydantic, SQLite, joblib, Google Colab and GitHub. Streamlit and Plotly provide the operational frontend; Power BI Desktop is planned for historical business intelligence.
+| Layer | Technologies |
+|---|---|
+| Data processing | Python, Pandas, NumPy |
+| Machine learning | scikit-learn, joblib |
+| Semantic retrieval | Sentence Transformers, FAISS |
+| Generative AI | Google Gemini SDK |
+| Backend | FastAPI, Pydantic |
+| Storage | SQLite |
+| Frontend | Streamlit, Plotly |
+| Development | Google Colab, GitHub |
+| Historical BI (planned) | Power BI Desktop |
 
 ## Reproduction and security
 
